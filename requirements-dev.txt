@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest>=8
+plotly>=5.20        # real plotly validator for every figure in tests/test_bridge.py
+pandas>=2.0         # optional: analysis.parameter_sweep returns a DataFrame
+reportlab>=4.0      # optional: report.to_pdf for desktop Python use (the website uses jsPDF)

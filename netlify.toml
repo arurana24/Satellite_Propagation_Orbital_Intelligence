@@ -1,0 +1,37 @@
+# Static site: the Python engine runs in the visitor's browser (Pyodide), so no server or Functions are needed.
+# The build only needs Node; scripts/bundle-engine.mjs copies the Python files into the site unchanged.
+[build]
+  base    = "web"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Hashed build assets never change: cache them forever.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Engine bundle, map data and service worker must revalidate so deploys take effect.
+[[headers]]
+  for = "/engine/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# SPA fallback (only applies when no file matches the path).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
